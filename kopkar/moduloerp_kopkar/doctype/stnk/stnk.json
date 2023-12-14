@@ -1,0 +1,210 @@
+{
+ "actions": [],
+ "autoname": "naming_series:",
+ "creation": "2023-12-12 13:36:38.120266",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "reference_number",
+  "customer_name",
+  "salesman_name",
+  "warehouse_name",
+  "departement_danme",
+  "column_break_hosz",
+  "transaction_date",
+  "required_by",
+  "column_break_pryt",
+  "bank_account",
+  "no_dokumen",
+  "currency",
+  "exchange_rate",
+  "section_break_xyzw",
+  "description",
+  "account_code",
+  "column_break_vtoi",
+  "other_fee",
+  "qty",
+  "discount",
+  "price",
+  "kode_pajak",
+  "final_discount",
+  "is_tunai"
+ ],
+ "fields": [
+  {
+   "fieldname": "transaction_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Tanggal Transaksi",
+   "options": "Today",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_hosz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_xyzw",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "label": "Keterangan"
+  },
+  {
+   "fieldname": "column_break_vtoi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_pryt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "no_dokumen",
+   "fieldtype": "Data",
+   "label": "No Dokumen",
+   "options": "0"
+  },
+  {
+   "fieldname": "qty",
+   "fieldtype": "Int",
+   "label": "Qty",
+   "options": "1"
+  },
+  {
+   "fieldname": "kode_pajak",
+   "fieldtype": "Data",
+   "label": "Kode Pajak",
+   "options": "-"
+  },
+  {
+   "fieldname": "reference_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "No Referensi",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Nama Pelanggan",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "salesman_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Nama Saleman",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "warehouse_name",
+   "fieldtype": "Data",
+   "label": "Nama Gudang",
+   "options": "Head Quarter"
+  },
+  {
+   "fieldname": "departement_danme",
+   "fieldtype": "Data",
+   "label": "Nama Departement",
+   "options": "STNK"
+  },
+  {
+   "fieldname": "required_by",
+   "fieldtype": "Date",
+   "label": "Tanggal Jatuh Tempo"
+  },
+  {
+   "fieldname": "bank_account",
+   "fieldtype": "Data",
+   "label": "Akun Bank",
+   "options": "0"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Data",
+   "label": "Mata Uang",
+   "options": "IDR"
+  },
+  {
+   "fieldname": "exchange_rate",
+   "fieldtype": "Float",
+   "label": "Nilai Tukar",
+   "options": "1"
+  },
+  {
+   "fieldname": "account_code",
+   "fieldtype": "Data",
+   "label": "Kode Akun",
+   "options": "0"
+  },
+  {
+   "fieldname": "other_fee",
+   "fieldtype": "Int",
+   "label": "Biaya Lain",
+   "options": "0"
+  },
+  {
+   "fieldname": "discount",
+   "fieldtype": "Float",
+   "label": "Diskon",
+   "options": "0"
+  },
+  {
+   "fieldname": "price",
+   "fieldtype": "Int",
+   "label": "Harga",
+   "options": "0"
+  },
+  {
+   "fieldname": "final_discount",
+   "fieldtype": "Data",
+   "label": "Diskon Final",
+   "options": "0"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_tunai",
+   "fieldtype": "Check",
+   "label": "Is Tunai",
+   "options": "F"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Data",
+   "label": "ID",
+   "options": "STNK-{MM}-{YYYY}-{####}"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2023-12-14 11:24:44.385143",
+ "modified_by": "Administrator",
+ "module": "moduloerp_kopkar",
+ "name": "STNK",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
