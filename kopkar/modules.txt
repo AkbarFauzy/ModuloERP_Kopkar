@@ -1,2 +1,2 @@
 moduloerp_kopkar
-mod
+STNK

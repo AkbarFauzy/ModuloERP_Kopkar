@@ -1,25 +1,31 @@
 {
  "actions": [],
  "allow_rename": 1,
- "creation": "2023-12-13 21:22:28.905881",
+ "autoname": "field:naming_series",
+ "creation": "2023-12-15 13:06:07.779839",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "data"
+  "naming_series"
  ],
  "fields": [
   {
-   "fieldname": "data",
+   "fieldname": "naming_series",
    "fieldtype": "Data",
-   "label": "data"
+   "in_list_view": 1,
+   "label": "ID",
+   "reqd": 1,
+   "search_index": 1,
+   "unique": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-12-13 21:22:57.609366",
+ "modified": "2023-12-15 14:44:37.406092",
  "modified_by": "Administrator",
- "module": "mod",
- "name": "tjok",
+ "module": "moduloerp_kopkar",
+ "name": "Chart of Account",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -37,6 +43,5 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": [],
- "track_changes": 1
+ "states": []
 }

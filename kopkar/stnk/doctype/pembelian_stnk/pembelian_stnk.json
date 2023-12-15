@@ -1,0 +1,220 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2023-12-15 13:34:43.908619",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "supplier_name",
+  "purchase_number",
+  "po_number",
+  "column_break_deal",
+  "invoice_date",
+  "delivery_date",
+  "column_break_ejma",
+  "project",
+  "department",
+  "section_break_mjke",
+  "description",
+  "description_note",
+  "code",
+  "purchase_bag",
+  "column_break_azff",
+  "qty",
+  "price",
+  "discount",
+  "tax",
+  "job",
+  "other_fee",
+  "column_break_wika",
+  "payment_term",
+  "crede_card",
+  "is_tunai",
+  "tax_total",
+  "total_after_tax",
+  "down_payment",
+  "balance"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Data",
+   "label": "ID",
+   "options": "Pembelian-STNK-ORD-.YYYY.-"
+  },
+  {
+   "fieldname": "column_break_deal",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_ejma",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_mjke",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_azff",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "job",
+   "fieldtype": "Data",
+   "label": "JOB"
+  },
+  {
+   "fieldname": "column_break_wika",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "crede_card",
+   "fieldtype": "Data",
+   "label": "Cre/De Card"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_tunai",
+   "fieldtype": "Check",
+   "label": "Is Tunai"
+  },
+  {
+   "fieldname": "supplier_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Nama Pemasok",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "purchase_number",
+   "fieldtype": "Data",
+   "label": "No Pembelian"
+  },
+  {
+   "fieldname": "po_number",
+   "fieldtype": "Data",
+   "label": "No PO"
+  },
+  {
+   "fieldname": "invoice_date",
+   "fieldtype": "Date",
+   "label": "Tanggal Faktur"
+  },
+  {
+   "fieldname": "delivery_date",
+   "fieldtype": "Date",
+   "label": "Tanggal Pengiriman"
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Data",
+   "label": "Proyek"
+  },
+  {
+   "fieldname": "department",
+   "fieldtype": "Data",
+   "label": "Departemen"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "label": "Keterangan"
+  },
+  {
+   "fieldname": "description_note",
+   "fieldtype": "Data",
+   "label": "Deskripsi Pesan"
+  },
+  {
+   "fieldname": "code",
+   "fieldtype": "Link",
+   "label": "Kode",
+   "options": "Chart of Account"
+  },
+  {
+   "fieldname": "purchase_bag",
+   "fieldtype": "Link",
+   "label": "Bag Pembelian",
+   "options": "User"
+  },
+  {
+   "fieldname": "qty",
+   "fieldtype": "Int",
+   "label": "Jumlah"
+  },
+  {
+   "fieldname": "price",
+   "fieldtype": "Float",
+   "label": "Harga"
+  },
+  {
+   "fieldname": "discount",
+   "fieldtype": "Float",
+   "label": "Diskon"
+  },
+  {
+   "fieldname": "tax",
+   "fieldtype": "Float",
+   "label": "Pajak"
+  },
+  {
+   "fieldname": "other_fee",
+   "fieldtype": "Float",
+   "label": "Biaya Lainnya"
+  },
+  {
+   "fieldname": "payment_term",
+   "fieldtype": "Data",
+   "label": "Term Pembayaran"
+  },
+  {
+   "fieldname": "tax_total",
+   "fieldtype": "Float",
+   "label": "Total Pajak"
+  },
+  {
+   "fieldname": "total_after_tax",
+   "fieldtype": "Float",
+   "label": "Total Setelah Pajak"
+  },
+  {
+   "fieldname": "down_payment",
+   "fieldtype": "Float",
+   "label": "Dibayar / Uang Muka"
+  },
+  {
+   "fieldname": "balance",
+   "fieldtype": "Float",
+   "label": "Saldo Terhutang"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2023-12-15 15:29:55.885903",
+ "modified_by": "Administrator",
+ "module": "STNK",
+ "name": "Pembelian STNK",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

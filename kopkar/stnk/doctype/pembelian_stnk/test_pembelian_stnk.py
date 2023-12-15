@@ -5,5 +5,5 @@
 from frappe.tests.utils import FrappeTestCase
 
 
-class Testkol(FrappeTestCase):
+class TestPembelianSTNK(FrappeTestCase):
 	pass

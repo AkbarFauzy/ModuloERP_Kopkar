@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class kol(Document):
+class PembelianSTNK(Document):
 	pass

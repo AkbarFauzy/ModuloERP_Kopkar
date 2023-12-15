@@ -1,0 +1,223 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2023-12-15 12:38:58.849364",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "customer_name",
+  "invoice_number",
+  "so_number",
+  "column_break_okxy",
+  "invoice_date",
+  "delivery_date",
+  "column_break_cfsf",
+  "project",
+  "department",
+  "section_break_qxxk",
+  "description",
+  "description_note",
+  "code",
+  "salesman",
+  "column_break_iwhx",
+  "qty",
+  "price",
+  "discount",
+  "tax",
+  "job",
+  "other_fee",
+  "column_break_nrwi",
+  "payment_term",
+  "crede_card",
+  "is_tunai",
+  "total_tax",
+  "total_after_tax",
+  "down_payment",
+  "balance"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Data",
+   "label": "ID",
+   "options": "Penjualan-STNK-ORD-.YYYY.-",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_okxy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_cfsf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_qxxk",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "salesman",
+   "fieldtype": "Link",
+   "label": "Salesman",
+   "options": "User"
+  },
+  {
+   "fieldname": "column_break_iwhx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "job",
+   "fieldtype": "Data",
+   "label": "JOB"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_tunai",
+   "fieldtype": "Check",
+   "label": "Is Tunai"
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Nama Pelanggan",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "delivery_date",
+   "fieldtype": "Date",
+   "label": "Tanggal Pengiriman"
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Data",
+   "label": "Proyek"
+  },
+  {
+   "fieldname": "department",
+   "fieldtype": "Data",
+   "label": "Departement",
+   "options": "STNK"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "label": "Keterangan"
+  },
+  {
+   "fieldname": "description_note",
+   "fieldtype": "Data",
+   "label": "Deskripsi Pesan"
+  },
+  {
+   "fieldname": "code",
+   "fieldtype": "Link",
+   "label": "Kode",
+   "options": "Chart of Account"
+  },
+  {
+   "fieldname": "qty",
+   "fieldtype": "Int",
+   "label": "Jumlah"
+  },
+  {
+   "fieldname": "price",
+   "fieldtype": "Float",
+   "label": "Harga"
+  },
+  {
+   "fieldname": "discount",
+   "fieldtype": "Float",
+   "label": "Diskon"
+  },
+  {
+   "fieldname": "tax",
+   "fieldtype": "Float",
+   "label": "Pajak"
+  },
+  {
+   "fieldname": "other_fee",
+   "fieldtype": "Float",
+   "label": "Biaya Lainnya"
+  },
+  {
+   "fieldname": "column_break_nrwi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "crede_card",
+   "fieldtype": "Data",
+   "label": "Cre/De Card"
+  },
+  {
+   "fieldname": "payment_term",
+   "fieldtype": "Data",
+   "label": "Term Pembayaran"
+  },
+  {
+   "fieldname": "invoice_number",
+   "fieldtype": "Data",
+   "label": "No Faktur"
+  },
+  {
+   "fieldname": "so_number",
+   "fieldtype": "Data",
+   "label": "No SO"
+  },
+  {
+   "fieldname": "invoice_date",
+   "fieldtype": "Data",
+   "label": "Tanggal Faktur",
+   "options": "Today"
+  },
+  {
+   "fieldname": "total_tax",
+   "fieldtype": "Float",
+   "label": "Total Pajak"
+  },
+  {
+   "fieldname": "total_after_tax",
+   "fieldtype": "Float",
+   "label": "Total Setelah Pajak"
+  },
+  {
+   "fieldname": "down_payment",
+   "fieldtype": "Float",
+   "label": "Dibayar / Uang Muka"
+  },
+  {
+   "fieldname": "balance",
+   "fieldtype": "Float",
+   "label": "Saldo Terhutang"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2023-12-15 15:49:14.377704",
+ "modified_by": "Administrator",
+ "module": "STNK",
+ "name": "Penjualan STNK",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

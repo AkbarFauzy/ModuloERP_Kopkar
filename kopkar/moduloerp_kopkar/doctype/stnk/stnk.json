@@ -178,12 +178,12 @@
    "fieldname": "naming_series",
    "fieldtype": "Data",
    "label": "ID",
-   "options": "STNK-{MM}-{YYYY}-{####}"
+   "options": "STNK-ORD-.YYYY.-"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-12-14 11:24:44.385143",
+ "modified": "2023-12-15 10:26:32.250817",
  "modified_by": "Administrator",
  "module": "moduloerp_kopkar",
  "name": "STNK",

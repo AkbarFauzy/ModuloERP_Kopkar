@@ -2,9 +2,32 @@ import frappe
 import json
 
 @frappe.whitelist()
-def get_stnk():
+def get_penjualan_stnk():
     try:
-        data = frappe.get_all("STNK", fields=["*"])
+        data = frappe.get_all("Penjualan STNK", fields=[
+                'customer_name',
+                'invoice_number',
+                'so_number',
+                'invoice_date',
+                'delivery_date',
+                'project',
+                'department',
+                'description',
+                'description_note',
+                'code',
+                'salesman',
+                'qty',
+                'price',
+                'discount',
+                'tax',
+                'job',
+                'other_fee',
+                'is_tunai',
+                'tax_total',
+                'total_after_tax',
+                'down_payment',
+                'balance',
+        ])
         response = {
             "status": 200,
             "message": "success",
@@ -26,9 +49,9 @@ def get_stnk():
     return response
 
 @frappe.whitelist()
-def get_stnk_by_id(docname):
+def get_penjualan_stnk_by_id(docname):
     try:
-        if not frappe.has_permission("STNK", "read", doc=docname):
+        if not frappe.has_permission("Penjualan STNK", "read", doc=docname):
             frappe.throw(("Not permitted"), frappe.PermissionError)
 
         doc = frappe.get_doc("STNK", docname)
@@ -53,34 +76,11 @@ def get_stnk_by_id(docname):
         }
 
     return response
-  
-@frappe.whitelist()
-def get_pembelian_stnk():
-    try:
-        data = frappe.get_all("STNK", fields=["*"], filters=[["description", "like", "%Pembelian%"]])
-        response = {
-            "status": 200,
-            "message": "success",
-            "data": data,
-        }
-    except frappe.PermissionError:
-        return {
-            "status": 500,
-            "message": "Internal Server Error"
-        }
-
-    except Exception as e:
-        return {
-            "status": 500,
-            "message": "Internal Server Error"
-        }
-
-    return response
 
 @frappe.whitelist()
 def get_penjualan_stnk():
     try:
-        data = frappe.get_all("STNK", fields=["*"], filters=[["description", "like", "%Penjualan%"]])
+        data = frappe.get_all("Penjualan STNK", fields=["*"])
         response = {
             "status": 200,
             "message": "success",
@@ -96,54 +96,62 @@ def get_penjualan_stnk():
     return response
 
 @frappe.whitelist()
-def add_stnk(
-    reference_number,
+def add_penjualan_stnk(
     customer_name,
-    salesman_name,
-    warehouse_name,
-    departement_name,
-    transaction_date,
-    required_by,
-    bank_account,
-    no_document,
-    note_detail,
-    currency,
-    exchange_rate,
+    invoice_number,
+    so_number,
+    invoice_date,
+    delivery_date,
+    project,
+    department,
     description,
-    account_code,
-    price,
+    description_note,
+    code,
+    salesman,
     qty,
+    price,
     discount,
+    tax,
+    job,
     other_fee,
-    final_discount,
-    is_tunai
+    payment_term,
+    crede_card,
+    is_tunai,
+    tax_total,
+    total_after_tax,
+    down_payment,
+    balance
 ):
     try:
-        if not frappe.has_permission("STNK", "create"):
+        if not frappe.has_permission("Penjualan STNK", "create"):
             frappe.throw(("Not permitted"), frappe.PermissionError)
 
         new_record = frappe.get_doc({
-            "doctype": "STNK",
-            "reference_number": reference_number,
+            "doctype": "Penjualan STNK",
             "customer_name": customer_name,
-            "salesman_name": salesman_name,
-            "warehouse_name": warehouse_name,
-            "departement_name": departement_name,
-            "transaction_date": transaction_date,
-            "required_by": required_by,
-            "bank_account": bank_account,
-            "no_document": no_document,
-            "note_detail": note_detail,
-            "currency": currency,
-            "exchange_rate": exchange_rate,
+            "invoice_number": invoice_number,
+            "so_number": so_number,
+            "invoice_date": invoice_date,
+            "delivery_date": delivery_date,
+            "project": project,
+            "department": department,
             "description": description,
-            "account_code": account_code,
-            "price": price,
+            "description_note": description_note,
+            "code": code,
+            "salesman": salesman,
             "qty": qty,
+            "price": price,
             "discount": discount,
+            "tax": tax,
+            "job": job,
             "other_fee": other_fee,
-            "final_discount": final_discount,
-            "is_tunai": is_tunai
+            "payment_term": payment_term,
+            "crede_card": crede_card,
+            "is_tunai": is_tunai,
+            "tax_total" : tax_total,
+            "total_after_tax": total_after_tax,
+            "down_payment": down_payment,
+            "balance":balance,
         })
 
         new_record.insert()
@@ -165,12 +173,12 @@ def add_stnk(
     return response
 
 @frappe.whitelist()
-def update_stnk(docname, updates):
+def update_penjualan_stnk(docname, updates):
     try:
-        if not frappe.has_permission("STNK", "write"):
+        if not frappe.has_permission("Penjualan STNK", "write"):
             frappe.throw(("Not permitted"), frappe.PermissionError)
 
-        doc = frappe.get_doc("STNK", docname)
+        doc = frappe.get_doc("Penjualan STNK", docname)
 
         for field, value in updates.items():
             if hasattr(doc, field):
@@ -186,7 +194,7 @@ def update_stnk(docname, updates):
     except frappe.DoesNotExistError:
         return {
             "status": 500,
-            "message": f"STNK {docname} does not exist"
+            "message": f"Penjualan STNK {docname} does not exist"
         }
 
     except frappe.PermissionError:
@@ -203,12 +211,12 @@ def update_stnk(docname, updates):
 
 
 @frappe.whitelist()
-def delete_stnk(docname):
+def delete_penjualan_stnk(docname):
     try:
-        if not frappe.has_permission("STNK", "delete"):
+        if not frappe.has_permission("Penjualan STNK", "delete"):
             frappe.throw(("Not permitted"), frappe.PermissionError)
 
-        doc = frappe.get_doc("STNK", docname)
+        doc = frappe.get_doc("Penjualan STNK", docname)
 
         doc.delete()
 

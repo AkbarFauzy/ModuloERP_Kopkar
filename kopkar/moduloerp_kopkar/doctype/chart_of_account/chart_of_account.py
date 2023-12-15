@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class tjok(Document):
+class ChartofAccount(Document):
 	pass
