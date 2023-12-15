@@ -4,7 +4,7 @@ import json
 @frappe.whitelist()
 def get_pembelian_stnk():
     try:
-        frappe.db.get_list('Pembelian STNK',
+        data = frappe.db.get_list('Pembelian STNK',
             fields=[
                 'supplier_name',
                 'purchase_number',
@@ -23,15 +23,14 @@ def get_pembelian_stnk():
                 'tax',
                 'job',
                 'other_fee',
+                'payment_term',
+                'crede_card',
                 'is_tunai',
                 'tax_total',
                 'total_after_tax',
                 'down_payment',
                 'balance',
                 ],
-            order_by='date desc',
-            start=10,
-            page_length=20,
             as_list=True
         )
 
@@ -121,6 +120,8 @@ def add_pembelian_stnk(
     tax,
     job,
     other_fee,
+    payment_term,
+    crede_card,
     is_tunai,
     tax_total,
     total_after_tax,
@@ -150,6 +151,8 @@ def add_pembelian_stnk(
             "tax": tax,
             "job": job,
             "other_fee": other_fee,
+            "payment_term": payment_term,
+            "crede_card": crede_card,
             "is_tunai": is_tunai,
             "tax_total" : tax_total,
             "total_after_tax": total_after_tax,
@@ -219,7 +222,7 @@ def delete_pembelian_stnk(docname):
         if not frappe.has_permission("pembelian STNK", "delete"):
             frappe.throw(("Not permitted"), frappe.PermissionError)
 
-        doc = frappe.get_doc("pembelian STNK", docname)
+        doc = frappe.get_doc("Pembelian STNK", docname)
 
         doc.delete()
 

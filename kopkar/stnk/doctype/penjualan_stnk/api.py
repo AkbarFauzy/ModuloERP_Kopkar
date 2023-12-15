@@ -23,6 +23,8 @@ def get_penjualan_stnk():
                 'job',
                 'other_fee',
                 'is_tunai',
+                'payment_term',
+                'crede_card',
                 'tax_total',
                 'total_after_tax',
                 'down_payment',
