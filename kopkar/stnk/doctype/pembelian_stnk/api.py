@@ -62,12 +62,12 @@ def get_pembelian_stnk_by_id(docname):
 
         doc = frappe.get_doc("Pembelian STNK", docname)
 
-        serialized_doc = frappe.as_json(doc.as_dict())
+        # serialized_doc = frappe.as_json(doc.as_dict())
 
         response = {
             "status": 200,
             "message": "success",
-            "data": serialized_doc,
+            "data": doc,
         }
     except frappe.PermissionError:
         return {
@@ -87,6 +87,7 @@ def get_pembelian_stnk_by_id(docname):
 def get_pembelian_stnk():
     try:
         data = frappe.get_all("Pembelian STNK", fields=["*"])
+        
         response = {
             "status": 200,
             "message": "success",

@@ -58,12 +58,12 @@ def get_penjualan_stnk_by_id(docname):
 
         doc = frappe.get_doc("Penjualan STNK", docname)
 
-        serialized_doc = frappe.as_json(doc.as_dict())
+        # serialized_doc = frappe.as_json(doc.as_dict())
 
         response = {
             "status": 200,
             "message": "success",
-            "data": serialized_doc,
+            "data": doc,
         }
     except frappe.PermissionError:
         return {
