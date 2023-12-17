@@ -2,53 +2,53 @@ import frappe
 import json
 
 @frappe.whitelist()
-def get_penjualan_stnk():
-    try:
-        data = frappe.get_all("Penjualan STNK", fields=[
-                'customer_name',
-                'invoice_number',
-                'so_number',
-                'invoice_date',
-                'delivery_date',
-                'project',
-                'department',
-                'description',
-                'description_note',
-                'code',
-                'salesman',
-                'qty',
-                'price',
-                'discount',
-                'tax',
-                'job',
-                'other_fee',
-                'is_tunai',
-                'payment_term',
-                'crede_card',
-                'tax_total',
-                'total_after_tax',
-                'down_payment',
-                'balance',
-        ])
-        response = {
-            "status": 200,
-            "message": "success",
-            "data": data,
-        }
+# def get_penjualan_stnk():
+#     try:
+#         data = frappe.get_all("Penjualan STNK", fields=[
+#                 'customer_name',
+#                 'invoice_number',
+#                 'so_number',
+#                 'invoice_date',
+#                 'delivery_date',
+#                 'project',
+#                 'department',
+#                 'description',
+#                 'description_note',
+#                 'code',
+#                 'salesman',
+#                 'qty',
+#                 'price',
+#                 'discount',
+#                 'tax',
+#                 'job',
+#                 'other_fee',
+#                 'is_tunai',
+#                 'payment_term',
+#                 'crede_card',
+#                 'tax_total',
+#                 'total_after_tax',
+#                 'down_payment',
+#                 'balance',
+#         ])
+#         response = {
+#             "status": 200,
+#             "message": "success",
+#             "data": data,
+#         }
 
-    except frappe.PermissionError:
-        return {
-            "status": 500,
-            "message": "Internal Server Error"
-        }
+#     except frappe.PermissionError:
+#         return {
+#             "status": 500,
+#             "message": "Internal Server Error"
+#         }
 
-    except Exception as e:
-        return {
-            "status": 500,
-            "message": "Internal Server Error"
-        }
+#     except Exception as e:
+#         return {
+#             "status": 500,
+#             "message": "Internal Server Error"
+#         }
 
-    return response
+#     return response
 
 @frappe.whitelist()
 def get_penjualan_stnk_by_id(docname):
@@ -56,7 +56,7 @@ def get_penjualan_stnk_by_id(docname):
         if not frappe.has_permission("Penjualan STNK", "read", doc=docname):
             frappe.throw(("Not permitted"), frappe.PermissionError)
 
-        doc = frappe.get_doc("STNK", docname)
+        doc = frappe.get_doc("Penjualan STNK", docname)
 
         serialized_doc = frappe.as_json(doc.as_dict())
 
@@ -175,22 +175,32 @@ def add_penjualan_stnk(
     return response
 
 @frappe.whitelist()
-def update_penjualan_stnk(docname, updates):
+def update_penjualan_stnk():
     try:
+        data = frappe.request.json
         if not frappe.has_permission("Penjualan STNK", "write"):
             frappe.throw(("Not permitted"), frappe.PermissionError)
+
+        docname = data.get('docname')
+        updates = data.get('updates') 
 
         doc = frappe.get_doc("Penjualan STNK", docname)
 
         for field, value in updates.items():
             if hasattr(doc, field):
                 setattr(doc, field, value)
+            else:
+                return {
+                    "status": 400,
+                    "message": f"Field '{field}' either does not exist or cannot be modified"
+                }
 
         doc.save()
 
         return {
             "status": 200,
-            "message": "success"
+            "message": "success",
+            "data": doc
         }
 
     except frappe.DoesNotExistError:
@@ -208,7 +218,8 @@ def update_penjualan_stnk(docname, updates):
     except Exception as e:
         return {
             "status": 500,
-            "message": "Internal Server Error"
+            "message": "Internal Server Error",
+            "e":e
         }
 
 
