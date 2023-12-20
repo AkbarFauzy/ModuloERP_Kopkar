@@ -120,9 +120,17 @@ def update_purchase_invoice():
         items_data = updates.get('items', [])
         if items_data:  # Check if items_data is not empty
             for item_data in items_data:
-                new_item = doc.append('items', {})
-                for field, value in item_data.items():
-                    setattr(new_item, field, value)
+                item_name = item_data.get('item_code')
+                existing_item = next(
+                        (item for item in doc.items if item.item_code == item_name), None
+                    )
+                if existing_item:
+                    for key, val in item_data.items():
+                            setattr(existing_item, key, val)
+                else:
+                    new_item = doc.append('items', {})
+                    for key, val in item_data.items():
+                        setattr(new_item, key, val)
 
         doc.save()
 
@@ -263,6 +271,54 @@ def add_payment_entry():
             "e":e
         }
 
+@frappe.whitelist()
+def update_payment_entry():
+    try:
+        data = frappe.request.json
+        if not frappe.has_permission("Payment Entry", "write"):
+            frappe.throw(("Not permitted"), frappe.PermissionError)
+
+        docname = data.get('docname')
+        updates = data.get('updates')
+
+        doc = frappe.get_doc("Payment Entry", docname)
+
+        for field, value in updates.items():
+            if hasattr(doc, field):
+                setattr(doc, field, value)
+            else:
+                 return {
+                    "status": 400,
+                    "message": f"Field '{field}' either does not exist or cannot be modified"
+                }
+
+        doc.save()
+
+        return {
+            "status": 200,
+            "message": "success",
+            "data": doc
+        }
+
+    except frappe.DoesNotExistError:
+        return {
+            "status": 500,
+            "message": f"Payment Entry {docname} does not exist"
+        }
+
+    except frappe.PermissionError:
+        return {
+            "status": 500,
+            "message": "You don't have permission to update this document"
+        }
+
+    except Exception as e:
+        return {
+            "status": 500,
+            "message": "Internal Server Error",
+            "e":e
+        }
+
 
 @frappe.whitelist()
 def delete_payment_entry(docname):
@@ -381,6 +437,73 @@ def add_sales_invoice():
             'status': 200,
             'message': 'Sales Invoice created successfully',
             'docname': new_invoice
+        }
+
+    except Exception as e:
+        return {
+            "status": 500,
+            "message": "Internal Server Error",
+            "e":e
+        }
+
+
+
+@frappe.whitelist()
+def update_sales_invoice():
+    try:
+        data = frappe.request.json
+        if not frappe.has_permission("Sales Invoice", "write"):
+            frappe.throw(("Not permitted"), frappe.PermissionError)
+
+        docname = data.get('docname')
+        updates = data.get('updates')
+
+        doc = frappe.get_doc("Sales Invoice", docname)
+
+        for field, value in updates.items():
+            if field == 'items':
+                continue  # Skip 'items' field, handle it separately
+            if hasattr(doc, field):
+                setattr(doc, field, value)
+            else:
+                 return {
+                    "status": 400,
+                    "message": f"Field '{field}' either does not exist or cannot be modified"
+                }
+
+        items_data = updates.get('items', [])
+        if items_data:  # Check if items_data is not empty
+            for item_data in items_data:
+                item_name = item_data.get('item_code')
+                existing_item = next(
+                        (item for item in doc.items if item.item_code == item_name), None
+                    )
+                if existing_item:
+                    for key, val in item_data.items():
+                            setattr(existing_item, key, val)
+                else:
+                    new_item = doc.append('items', {})
+                    for key, val in item_data.items():
+                        setattr(new_item, key, val)
+
+        doc.save()
+
+        return {
+            "status": 200,
+            "message": "success",
+            "data": doc
+        }
+
+    except frappe.DoesNotExistError:
+        return {
+            "status": 500,
+            "message": f"Sales Invoice {docname} does not exist"
+        }
+
+    except frappe.PermissionError:
+        return {
+            "status": 500,
+            "message": "You don't have permission to update this document"
         }
 
     except Exception as e:
