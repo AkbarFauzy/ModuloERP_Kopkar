@@ -122,7 +122,7 @@ def update_purchase_invoice():
             for item_data in items_data:
                 item_name = item_data.get('item_code')
                 existing_item = next(
-                        (item for item in doc.items if item.item_code == item_name), None
+                        (item for item in doc.items if item.item_name == item_name), None
                     )
                 if existing_item:
                     for key, val in item_data.items():
@@ -476,7 +476,7 @@ def update_sales_invoice():
             for item_data in items_data:
                 item_name = item_data.get('item_code')
                 existing_item = next(
-                        (item for item in doc.items if item.item_code == item_name), None
+                        (item for item in doc.items if item.item_name == item_name), None
                     )
                 if existing_item:
                     for key, val in item_data.items():
