@@ -65,26 +65,30 @@ def add_purchase_invoice():
             new_supplier.insert()
 
         credit_to_account = frappe.get_all("Account", filters={"account_number": request_data["credit_to"]})
-        expense_account = frappe.get_all("Account", filters={"account_number": request_data["expense_account"]})
-
-        if credit_to_account and expense_account:
+        if credit_to_account:
             new_invoice = frappe.new_doc('Purchase Invoice')
             request_data["credit_to"] = credit_to_account[0].name
-            request_data["expense_account"] = expense_account[0].name
             for field, value in request_data.items():
                 if field == 'items':
                     continue  # Skip 'items' field, handle it separately
                 if hasattr(new_invoice, field):
                     setattr(new_invoice, field, value)
-                else:
-                    return field
 
             items_data = request_data.get('items', [])
             if items_data:  # Check if items_data is not empty
                 for item_data in items_data:
-                    new_item = new_invoice.append('items', {})
-                    for field, value in item_data.items():
-                        setattr(new_item, field, value)
+                    expense_account = frappe.get_all("Account", filters={"account_number": item_data["expense_account"]})
+                    if expense_account:
+                        item_data["expense_account"] = expense_account[0].name
+                        new_item = new_invoice.append('items', {})
+                        for field, value in item_data.items():
+                            setattr(new_item, field, value)
+                    else:
+                        return {
+                            'status': 404,
+                            'message': 'One or both accounts not found'
+                        }
+
 
             new_invoice.insert()
             new_invoice.save()  # Save the Purchase Invoice with items
@@ -444,45 +448,44 @@ def add_sales_invoice():
             new_customer = frappe.new_doc('Customer')
             new_customer.customer_name = customer
             new_customer.insert()
+       
+        new_invoice = frappe.new_doc('Sales Invoice')
+        for field, value in request_data.items():
+            if field == 'items':
+                continue
+            if hasattr(new_invoice, field):
+                setattr(new_invoice, field, value)
+            else:
+                return field
+        items_data = request_data.get('items', [])
+        if items_data: 
+            for item_data in items_data:
+                income_account = frappe.get_all("Account", filters={"account_number": item_data["income_account"] })
+                debit_to_account = frappe.get_all("Account", filters={"account_number": item_data["debit_to"]})
+                if income_account and debit_to_account:
+                    item_data["income_account"] = income_account[0].name
+                    item_data["debit_to_account"] = debit_to_account[0].name
 
-        income_account = frappe.get_all("Account", filters={"account_number": request_data["income_account"] })
-        debit_to_account = frappe.get_all("Account", filters={"account_number": request_data["debit_to"]})
-
-        if income_account and debit_to_account:
-            new_invoice = frappe.new_doc('Sales Invoice')
-            for field, value in request_data.items():
-                if field == 'items':
-                    continue
-                if hasattr(new_invoice, field):
-                    setattr(new_invoice, field, value)
-                else:
-                    return field
-
-            items_data = request_data.get('items', [])
-            if items_data: 
-                for item_data in items_data:
                     new_item = new_invoice.append('items', {})
                     for field, value in item_data.items():
                         setattr(new_item, field, value)
+                else:
+                    return {
+                        'status': 404,
+                        'message': 'One or both accounts not found'
+                    }
 
-            new_invoice.insert()
-            new_invoice.save()
 
-            frappe.db.commit()
 
-            new_invoice.submit()
-
-            return {
-                'status': 200,
-                'message': 'Sales Invoice created successfully',
-                'docname': new_invoice
-            }
-        
-        else:
-            return {
-                'status': 404,
-                'message': 'One or both accounts not found'
-            }
+        new_invoice.insert()
+        new_invoice.save()
+        frappe.db.commit()
+        new_invoice.submit()
+        return {
+            'status': 200,
+            'message': 'Sales Invoice created successfully',
+            'docname': new_invoice
+        }
 
     except Exception as e:
         return {
