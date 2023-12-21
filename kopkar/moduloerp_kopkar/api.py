@@ -30,7 +30,6 @@ def get_purchase_invoice_by_id(docname):
         if not frappe.has_permission("Purchase Invoice", "read", doc=docname):
             frappe.throw(("Not permitted"), frappe.PermissionError)
         doc = frappe.get_doc("Purchase Invoice", docname)
-        # serialized_doc = frappe.as_json(doc.as_dict())
         response = {
             "status": 200,
             "message": "success",
@@ -57,34 +56,54 @@ def add_purchase_invoice():
             frappe.throw(("Not permitted"), frappe.PermissionError)
 
         request_data = frappe.request.json
-        new_invoice = frappe.new_doc('Purchase Invoice')
-        for field, value in request_data.items():
-            if field == 'items':
-                continue  # Skip 'items' field, handle it separately
-            if hasattr(new_invoice, field):
-                setattr(new_invoice, field, value)
-            else:
-                return field
 
-        items_data = request_data.get('items', [])
-        if items_data:  # Check if items_data is not empty
-            for item_data in items_data:
-                new_item = new_invoice.append('items', {})
-                for field, value in item_data.items():
-                    setattr(new_item, field, value)
+        supplier = request_data.get('supplier')
+        supplier_exists = frappe.get_all("Supplier", filters={"supplier_name": supplier})
+        if not supplier_exists:
+            new_supplier = frappe.new_doc('Supplier')
+            new_supplier.supplier_name = supplier
+            new_supplier.insert()
 
-        new_invoice.insert()
-        new_invoice.save()  # Save the Purchase Invoice with items
+        credit_to_account = frappe.get_all("Account", filters={"account_number": request_data["credit_to"]})
+        expense_account = frappe.get_all("Account", filters={"account_number": request_data["expense_account"]})
 
-        frappe.db.commit()
+        if credit_to_account and expense_account:
+            new_invoice = frappe.new_doc('Purchase Invoice')
+            request_data["credit_to"] = credit_to_account[0].name
+            request_data["expense_account"] = expense_account[0].name
+            for field, value in request_data.items():
+                if field == 'items':
+                    continue  # Skip 'items' field, handle it separately
+                if hasattr(new_invoice, field):
+                    setattr(new_invoice, field, value)
+                else:
+                    return field
 
-        new_invoice.submit()
+            items_data = request_data.get('items', [])
+            if items_data:  # Check if items_data is not empty
+                for item_data in items_data:
+                    new_item = new_invoice.append('items', {})
+                    for field, value in item_data.items():
+                        setattr(new_item, field, value)
 
-        return {
-            'status': 200,
-            'message': 'Purchase Invoice created successfully',
-            'docname': new_invoice
-        }
+            new_invoice.insert()
+            new_invoice.save()  # Save the Purchase Invoice with items
+
+            frappe.db.commit()
+
+            new_invoice.submit()
+
+            return {
+                'status': 200,
+                'message': 'Purchase Invoice created successfully',
+                'docname': new_invoice
+            }
+        
+        else:
+            return {
+                'status': 404,
+                'message': 'One or both accounts not found'
+            } 
 
     except Exception as e:
         return {
@@ -108,7 +127,7 @@ def update_purchase_invoice():
 
         for field, value in updates.items():
             if field == 'items':
-                continue  # Skip 'items' field, handle it separately
+                continue
             if hasattr(doc, field):
                 setattr(doc, field, value)
             else:
@@ -118,7 +137,7 @@ def update_purchase_invoice():
                 }
 
         items_data = updates.get('items', [])
-        if items_data:  # Check if items_data is not empty
+        if items_data:
             for item_data in items_data:
                 item_name = item_data.get('item_name')
                 existing_item = next(
@@ -244,25 +263,33 @@ def add_payment_entry():
             frappe.throw(("Not permitted"), frappe.PermissionError)
 
         request_data = frappe.request.json
-        new_invoice = frappe.new_doc('Payment Entry')
-        for field, value in request_data.items():
-            if hasattr(new_invoice, field):
-                setattr(new_invoice, field, value)
-            else:
-                return field
-            
-        new_invoice.insert()
-        new_invoice.save()  
 
-        frappe.db.commit()
+        paid_from_account = frappe.get_all("Account", filters={"account_number": request_data["paid_from"]})
+        paid_to_account = frappe.get_all("Account", filters={"account_number": request_data["paid_to"]})
 
-        new_invoice.submit()
+        if paid_from_account and paid_to_account:
+            new_invoice = frappe.new_doc('Payment Entry')
 
-        return {
-            'status': 200,
-            'message': 'Payment Entry created successfully',
-            'docname': new_invoice
-        }
+            request_data["paid_from"] = paid_from_account[0].name
+            request_data["paid_to"] = paid_to_account[0].name
+            for field, value in request_data.items():
+                if hasattr(new_invoice, field):
+                    setattr(new_invoice, field, value)
+                else:
+                    return field
+                
+            new_invoice.insert()
+            new_invoice.save()  
+
+            frappe.db.commit()
+
+            new_invoice.submit()
+
+            return {
+                'status': 200,
+                'message': 'Payment Entry created successfully',
+                'docname': new_invoice
+            }
 
     except Exception as e:
         return {
@@ -410,34 +437,52 @@ def add_sales_invoice():
             frappe.throw(("Not permitted"), frappe.PermissionError)
 
         request_data = frappe.request.json
-        new_invoice = frappe.new_doc('Sales Invoice')
-        for field, value in request_data.items():
-            if field == 'items':
-                continue
-            if hasattr(new_invoice, field):
-                setattr(new_invoice, field, value)
-            else:
-                return field
 
-        items_data = request_data.get('items', [])
-        if items_data: 
-            for item_data in items_data:
-                new_item = new_invoice.append('items', {})
-                for field, value in item_data.items():
-                    setattr(new_item, field, value)
+        customer = request_data.get('customer')
+        customer_exists = frappe.get_all("Customer", filters={"customer_name": customer})
+        if not customer_exists:
+            new_customer = frappe.new_doc('Customer')
+            new_customer.customer_name = customer
+            new_customer.insert()
 
-        new_invoice.insert()
-        new_invoice.save()
+        income_account = frappe.get_all("Account", filters={"account_number": request_data["income_account"] })
+        debit_to_account = frappe.get_all("Account", filters={"account_number": request_data["debit_to"]})
 
-        frappe.db.commit()
+        if income_account and debit_to_account:
+            new_invoice = frappe.new_doc('Sales Invoice')
+            for field, value in request_data.items():
+                if field == 'items':
+                    continue
+                if hasattr(new_invoice, field):
+                    setattr(new_invoice, field, value)
+                else:
+                    return field
 
-        new_invoice.submit()
+            items_data = request_data.get('items', [])
+            if items_data: 
+                for item_data in items_data:
+                    new_item = new_invoice.append('items', {})
+                    for field, value in item_data.items():
+                        setattr(new_item, field, value)
 
-        return {
-            'status': 200,
-            'message': 'Sales Invoice created successfully',
-            'docname': new_invoice
-        }
+            new_invoice.insert()
+            new_invoice.save()
+
+            frappe.db.commit()
+
+            new_invoice.submit()
+
+            return {
+                'status': 200,
+                'message': 'Sales Invoice created successfully',
+                'docname': new_invoice
+            }
+        
+        else:
+            return {
+                'status': 404,
+                'message': 'One or both accounts not found'
+            }
 
     except Exception as e:
         return {
