@@ -70,12 +70,12 @@ def add_purchase_invoice():
             request_data["credit_to"] = credit_to_account[0].name
             for field, value in request_data.items():
                 if field == 'items':
-                    continue  # Skip 'items' field, handle it separately
+                    continue 
                 if hasattr(new_invoice, field):
                     setattr(new_invoice, field, value)
 
             items_data = request_data.get('items', [])
-            if items_data:  # Check if items_data is not empty
+            if items_data:
                 for item_data in items_data:
                     expense_account = frappe.get_all("Account", filters={"account_number": item_data["expense_account"]})
                     if expense_account:
@@ -91,11 +91,10 @@ def add_purchase_invoice():
 
 
             new_invoice.insert()
-            new_invoice.save()  # Save the Purchase Invoice with items
-
+            new_invoice.save()
             frappe.db.commit()
 
-            new_invoice.submit()
+            # new_invoice.submit()
 
             return {
                 'status': 200,
@@ -129,6 +128,16 @@ def update_purchase_invoice():
 
         doc = frappe.get_doc("Purchase Invoice", docname)
 
+        if updates.get("credit_to"):
+            credit_to_account = frappe.get_all("Account", filters={"account_number": updates["credit_to"]})
+            if credit_to_account:
+                credit_to_account = frappe.get_all("Account", filters={"account_number": updates["credit_to"]})
+            else:
+                return {
+                    'status': 404,
+                    'message': 'One or both accounts not found'
+                } 
+
         for field, value in updates.items():
             if field == 'items':
                 continue
@@ -148,6 +157,16 @@ def update_purchase_invoice():
                         (item for item in doc.items if item.item_name == item_name), None
                     )
                 if existing_item:
+                    if item_data.get("expense_account"):
+                        expense_account = frappe.get_all("Account", filters={"account_number": item_data["expense_account"]})
+                        if expense_account:
+                            item_data["expense_account"] = expense_account[0].name
+                        else:
+                            return {
+                                'status': 404,
+                                'message': 'Expense Account not Found'
+                            }
+                    
                     for key, val in item_data.items():
                         setattr(existing_item, key, val)
                 else:
@@ -279,15 +298,13 @@ def add_payment_entry():
             for field, value in request_data.items():
                 if hasattr(new_invoice, field):
                     setattr(new_invoice, field, value)
-                else:
-                    return field
-                
+                    
             new_invoice.insert()
             new_invoice.save()  
 
             frappe.db.commit()
 
-            new_invoice.submit()
+            # new_invoice.submit()
 
             return {
                 'status': 200,
@@ -311,6 +328,16 @@ def update_payment_entry():
 
         docname = data.get('docname')
         updates = data.get('updates')
+
+        if updates.get('paid_from'):
+            paid_from_account = frappe.get_all("Account", filters={"account_number": updates["paid_from"]})
+            if paid_from_account:
+                updates["paid_from"] = paid_from_account[0].name
+
+        if updates.get('paid_to'):
+            paid_to_account = frappe.get_all("Account", filters={"account_number": updates["paid_to"]})
+            if paid_to_account:
+                updates["paid_to"] = paid_to_account[0].name 
 
         doc = frappe.get_doc("Payment Entry", docname)
 
@@ -455,8 +482,7 @@ def add_sales_invoice():
                 continue
             if hasattr(new_invoice, field):
                 setattr(new_invoice, field, value)
-            else:
-                return field
+      
         items_data = request_data.get('items', [])
         if items_data: 
             for item_data in items_data:
@@ -475,12 +501,10 @@ def add_sales_invoice():
                         'message': 'One or both accounts not found'
                     }
 
-
-
         new_invoice.insert()
         new_invoice.save()
         frappe.db.commit()
-        new_invoice.submit()
+        # new_invoice.submit()
         return {
             'status': 200,
             'message': 'Sales Invoice created successfully',
@@ -493,8 +517,6 @@ def add_sales_invoice():
             "message": "Internal Server Error",
             "e":e
         }
-
-
 
 @frappe.whitelist()
 def update_sales_invoice():
@@ -527,8 +549,28 @@ def update_sales_invoice():
                         (item for item in doc.items if item.item_name == item_name), None
                     )
                 if existing_item:
+                    if item_data.get("income_account"):
+                        income_account = frappe.get_all("Account", filters={"account_number": item_data["income_account"] })
+                        if income_account:
+                            item_data["income_account"] = income_account[0].name
+                        else:
+                             return {
+                                'status': 404,
+                                'message': 'Income Account Not Found'
+                            }
+
+                    if item_data.get("debit_to"):
+                        debit_to_account = frappe.get_all("Account", filters={"account_number": item_data["debit_to"]})
+                        if debit_to_account:
+                            item_data["debit_to_account"] = debit_to_account[0].name
+                        else:
+                            return {
+                                'status': 404,
+                                'message': 'Debut To Account not found'
+                            }
+                        
                     for key, val in item_data.items():
-                            setattr(existing_item, key, val)
+                        setattr(existing_item, key, val)
                 else:
                     new_item = doc.append('items', {})
                     for key, val in item_data.items():
@@ -592,4 +634,123 @@ def delete_sales_invoice(docname):
         return {
             "status": 500,
             "message": "Internal Server Error"
+        }
+
+
+@frappe.whitelist()
+def submit_purchase_invoice(docname):
+    try:
+        if not frappe.has_permission("Purchase Invoice", "write"):
+            frappe.throw(("Not permitted"), frappe.PermissionError)
+
+        doc = frappe.get_doc("Purchase Invoice", docname)
+        if doc.docstatus == 0:
+            doc.submit()
+
+            return {
+                'status': 200,
+                'message': f'Purchase Invoice {docname} submitted successfully'
+            }
+        else:
+            return {
+                'status': 400,
+                'message': f'Purchase Invoice {docname} is not in a draft state'
+            }
+
+    except frappe.DoesNotExistError:
+        return {
+            "status": 404,
+            "message": f"Purchase Invoice {docname} does not exist"
+        }
+
+    except frappe.PermissionError:
+        return {
+            "status": 403,
+            "message": "You don't have permission to submit this document"
+        }
+
+    except Exception as e:
+        return {
+            "status": 500,
+            "message": "Internal Server Error",
+            "e": e
+        }
+
+
+@frappe.whitelist()
+def submit_sales_invoice(docname):
+    try:
+        if not frappe.has_permission("Sales Invoice", "write"):
+            frappe.throw(("Not permitted"), frappe.PermissionError)
+
+        doc = frappe.get_doc("Sales Invoice", docname)
+        if doc.docstatus == 0:
+            doc.submit()
+
+            return {
+                'status': 200,
+                'message': f'Sales Invoice {docname} submitted successfully'
+            }
+        else:
+            return {
+                'status': 400,
+                'message': f'Sales Invoice {docname} is not in a draft state'
+            }
+
+    except frappe.DoesNotExistError:
+        return {
+            "status": 404,
+            "message": f"Sales Invoice {docname} does not exist"
+        }
+
+    except frappe.PermissionError:
+        return {
+            "status": 403,
+            "message": "You don't have permission to submit this document"
+        }
+
+    except Exception as e:
+        return {
+            "status": 500,
+            "message": "Internal Server Error",
+            "e": e
+        }
+
+@frappe.whitelist()
+def submit_payment_entry(docname):
+    try:
+        if not frappe.has_permission("Payment Entry", "write"):
+            frappe.throw(("Not permitted"), frappe.PermissionError)
+
+        doc = frappe.get_doc("Payment Entry", docname)
+        if doc.docstatus == 0:
+            doc.submit()
+
+            return {
+                'status': 200,
+                'message': f'Payment Entry {docname} submitted successfully'
+            }
+        else:
+            return {
+                'status': 400,
+                'message': f'Payment Entry {docname} is not in a draft state'
+            }
+
+    except frappe.DoesNotExistError:
+        return {
+            "status": 404,
+            "message": f"Payment Entry {docname} does not exist"
+        }
+
+    except frappe.PermissionError:
+        return {
+            "status": 403,
+            "message": "You don't have permission to submit this document"
+        }
+
+    except Exception as e:
+        return {
+            "status": 500,
+            "message": "Internal Server Error",
+            "e": e
         }
