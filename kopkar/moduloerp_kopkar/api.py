@@ -474,8 +474,19 @@ def add_sales_invoice():
         if not customer_exists:
             new_customer = frappe.new_doc('Customer')
             new_customer.customer_name = customer
-            new_customer.currency = "IDR"
+
+            default_account= {
+                    "parent": new_customer.name,
+                    "company": "Kopkar Toyota",
+                    "account": "130-10 - Piutang Pokok Anggota - Kopkar Toyota",
+                    "parentfield": "accounts",
+                    "parenttype": "Customer",
+                    "doctype": "Party Account"
+                }
+
+            new_customer.append('accounts', default_account)
             new_customer.insert()
+            
        
         new_invoice = frappe.new_doc('Sales Invoice')
         for field, value in request_data.items():
