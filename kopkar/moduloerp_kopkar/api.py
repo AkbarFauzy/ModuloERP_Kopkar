@@ -474,7 +474,7 @@ def add_sales_invoice():
         if not customer_exists:
             new_customer = frappe.new_doc('Customer')
             new_customer.customer_name = customer
-            new_customer.currency = request_data.get('currency')
+            new_customer.currency = "IDR"
             new_customer.insert()
        
         new_invoice = frappe.new_doc('Sales Invoice')
