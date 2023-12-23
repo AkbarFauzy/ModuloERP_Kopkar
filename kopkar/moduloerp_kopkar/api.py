@@ -305,7 +305,7 @@ def add_payment_entry():
             if items_data:
                 for item_data in items_data:
                     payment_references = frappe.get_all(item_data["reference_doctype"], 
-                                                         filters={"reference_name": item_data["reference_name"]})
+                                                         filters={"name": item_data["reference_name"]})
                     if payment_references:
                         new_item = new_invoice.append('references', {})
                         for field, value in item_data.items():
