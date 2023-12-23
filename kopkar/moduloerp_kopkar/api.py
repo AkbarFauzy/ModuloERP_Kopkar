@@ -307,10 +307,9 @@ def add_payment_entry():
                     payment_references = frappe.get_all(item_data["reference_doctype"], 
                                                          filters={"name": item_data["reference_name"]})
                     if payment_references:
-                        new_invoice.append('references', {
-                            'reference_doctype': item_data["reference_doctype"],
-                            'reference_name': item_data["reference_name"]
-                        })
+                        new_item = new_invoice.append('references', {})
+                        for field, value in item_data.items():
+                            setattr(new_item, field, value)
                     else:
                         return {
                             'status': 404,
