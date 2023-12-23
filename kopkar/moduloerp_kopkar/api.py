@@ -310,6 +310,7 @@ def add_payment_entry():
                         new_item = new_invoice.append('references', {})
                         for field, value in item_data.items():
                             setattr(new_item, field, value)
+                        return new_item
                     else:
                         return {
                             'status': 404,
