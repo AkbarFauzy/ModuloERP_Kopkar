@@ -298,7 +298,23 @@ def add_payment_entry():
             for field, value in request_data.items():
                 if hasattr(new_invoice, field):
                     setattr(new_invoice, field, value)
-                    
+
+            items_data = request_data.get('references', [])
+            if items_data:
+                for item_data in items_data:
+                    payment_references = frappe.get_all(request_data["reference_doctype"], 
+                                                         filters={"reference_name": item_data["reference_name"]})
+                    if payment_references:
+                        new_item = new_invoice.append('references', {})
+                        for field, value in item_data.items():
+                            setattr(new_item, field, value)
+                    else:
+                        return {
+                            'status': 404,
+                            'message': 'Reference Not Found'
+                    }
+
+
             new_invoice.insert()
             new_invoice.save()  
 
