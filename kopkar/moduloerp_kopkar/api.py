@@ -296,13 +296,15 @@ def add_payment_entry():
             request_data["paid_from"] = paid_from_account[0].name
             request_data["paid_to"] = paid_to_account[0].name
             for field, value in request_data.items():
+                if field == 'references':
+                    continue
                 if hasattr(new_invoice, field):
                     setattr(new_invoice, field, value)
 
             items_data = request_data.get('references', [])
             if items_data:
                 for item_data in items_data:
-                    payment_references = frappe.get_all(request_data["reference_doctype"], 
+                    payment_references = frappe.get_all(item_data["reference_doctype"], 
                                                          filters={"reference_name": item_data["reference_name"]})
                     if payment_references:
                         new_item = new_invoice.append('references', {})
