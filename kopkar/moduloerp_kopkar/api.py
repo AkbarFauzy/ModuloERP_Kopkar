@@ -740,7 +740,7 @@ def add_journal_entry():
                 if account:
                     account_data["account"] = account[0].name
 
-                    new_item = new_journal.append('items', {})
+                    new_item = new_journal.append('accounts', {})
                     for field, value in account_data.items():
                         setattr(new_item, field, value)
                 else:
