@@ -131,7 +131,7 @@ def update_purchase_invoice():
         if updates.get("credit_to"):
             credit_to_account = frappe.get_all("Account", filters={"account_number": updates["credit_to"]})
             if credit_to_account:
-                credit_to_account = frappe.get_all("Account", filters={"account_number": updates["credit_to"]})
+               updates["credit_to"] = credit_to_account[0].name
             else:
                 return {
                     'status': 404,
