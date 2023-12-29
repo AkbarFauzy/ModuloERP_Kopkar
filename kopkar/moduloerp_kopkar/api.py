@@ -1005,7 +1005,14 @@ def submit_payment_entry(docname):
 
         doc = frappe.get_doc("Payment Entry", docname)
         if doc.docstatus == 0:
-            doc.validate()
+            errors = doc.run_method("validate")
+            if errors:
+                return {
+                    'status': 400,
+                    'message': f'Validation failed for Payment Entry {docname}',
+                    'e': errors
+                }
+
             doc.submit()
 
             return {
