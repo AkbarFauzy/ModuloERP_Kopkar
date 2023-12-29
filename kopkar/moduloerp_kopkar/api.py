@@ -347,6 +347,12 @@ def add_payment_entry():
                 'message': 'Payment Entry created successfully',
                 'docname': new_invoice
             }
+        
+        else:
+            return {
+                'status': 404,
+                'message': 'Account Not Found'
+            }
 
     except Exception as e:
         return {
