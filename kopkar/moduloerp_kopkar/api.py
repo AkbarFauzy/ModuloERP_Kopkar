@@ -797,11 +797,12 @@ def update_journal_entry(docname):
                 if account_data.get("account"):
                     account = frappe.get_all("Account", filters={"account_number": account_data["account"] })
                     if account:
-                        account_data["income_account"] = account[0].name
+                        account_data["account"] = account[0].name
+                        account_name = account[0].name
                     else:
                         return {
                             'status': 404,
-                            'message': 'Income Account Not Found'
+                            'message': 'Account Not Found'
                         }           
                 existing_account = next(
                         (account for account in doc.accounts if account.account == account_name), None
