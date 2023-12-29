@@ -288,18 +288,18 @@ def add_payment_entry():
         request_data = frappe.request.json
 
         payment_type = request_data.get("payment_type")
-        customer_type = request_data.get("customer_type")
+        party_type = request_data.get("party_type")
 
-        if payment_type == "Receive" and customer_type == "Customer":
+        if payment_type == "Receive" and party_type == "Customer":
             paid_from_account = frappe.get_all("Account", filters={"account_number": request_data["paid_from"], "account_type": ["in", ["Receivable"]]})
             paid_to_account = frappe.get_all("Account", filters={"account_number": request_data["paid_to"], "account_type": ["in", ["Bank", "Cash"]]})
-        elif payment_type == "Pay" and customer_type == "Customer":
+        elif payment_type == "Pay" and party_type == "Customer":
             paid_from_account = frappe.get_all("Account", filters={"account_number": request_data["paid_from"], "account_type": ["in", ["Bank", "Cash"]]})
             paid_to_account = frappe.get_all("Account", filters={"account_number": request_data["paid_to"], "account_type": ["in", ["Receivable"]]})
-        elif payment_type == "Receive" and customer_type == "Supplier":
+        elif payment_type == "Receive" and party_type == "Supplier":
             paid_from_account = frappe.get_all("Account", filters={"account_number": request_data["paid_from"], "account_type": ["in", ["Payable"]]})
             paid_to_account = frappe.get_all("Account", filters={"account_number": request_data["paid_to"], "account_type": ["in", ["Bank", "Cash"]]})
-        elif payment_type == "Pay" and customer_type == "Supplier":
+        elif payment_type == "Pay" and party_type == "Supplier":
             paid_from_account = frappe.get_all("Account", filters={"account_number": request_data["paid_from"], "account_type": ["in", ["Bank", "Cash"]]})
             paid_to_account = frappe.get_all("Account", filters={"account_number": request_data["paid_to"], "account_type": ["in", ["Payable"]]})
         else:
@@ -367,13 +367,13 @@ def update_payment_entry():
 
         doc = frappe.get_doc("Payment Entry", docname)
         payment_type = doc.get('payment_type')
-        customer_type = doc.get('customer_type')
+        party_type = doc.get('party_type')
 
         if updates.get('paid_from'):
             # paid_from_account = frappe.get_all("Account", filters={"account_number": updates["paid_from"]})
-            if payment_type == "Receive" and customer_type == "Customer":
+            if payment_type == "Receive" and party_type == "Customer":
                 paid_from_account = frappe.get_all("Account", filters={"account_number": updates["paid_from"], "account_type": ["in", ["Receivable"]]})
-            elif payment_type == "Receive" and customer_type == "Supplier":
+            elif payment_type == "Receive" and party_type == "Supplier":
                 paid_from_account = frappe.get_all("Account", filters={"account_number": updates["paid_from"], "account_type": ["in", ["Payable"]]})
             elif payment_type == "Pay":
                 paid_from_account = frappe.get_all("Account", filters={"account_number": updates["paid_from"], "account_type": ["in", ["Bank", "Cash"]]})
@@ -390,9 +390,9 @@ def update_payment_entry():
             # paid_to_account = frappe.get_all("Account", filters={"account_number": updates["paid_to"]})
             if payment_type == "Receive":
                 paid_to_account = frappe.get_all("Account", filters={"account_number": updates["paid_to"], "account_type": ["in", ["Bank", "Cash"]]})
-            elif payment_type == "Pay" and customer_type == "Customer":
+            elif payment_type == "Pay" and party_type == "Customer":
                 paid_to_account = frappe.get_all("Account", filters={"account_number": updates["paid_to"], "account_type": ["in", ["Receivable"]]})
-            elif payment_type == "Pay" and customer_type == "Supplier":
+            elif payment_type == "Pay" and party_type == "Supplier":
                 paid_to_account = frappe.get_all("Account", filters={"account_number": updates["paid_to"], "account_type": ["in", ["Payable"]]})
             else:
                 return {
