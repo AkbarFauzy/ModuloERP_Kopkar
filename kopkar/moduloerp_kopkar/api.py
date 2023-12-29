@@ -884,6 +884,7 @@ def submit_journal_entry(docname):
 
         doc = frappe.get_doc("Journal Entry", docname)
         if doc.docstatus == 0:
+            doc.validate()
             doc.submit()
 
             return {
@@ -923,6 +924,7 @@ def submit_purchase_invoice(docname):
 
         doc = frappe.get_doc("Purchase Invoice", docname)
         if doc.docstatus == 0:
+            doc.validate()
             doc.submit()
 
             return {
@@ -963,6 +965,7 @@ def submit_sales_invoice(docname):
 
         doc = frappe.get_doc("Sales Invoice", docname)
         if doc.docstatus == 0:
+            doc.validate()
             doc.submit()
 
             return {
@@ -1002,6 +1005,7 @@ def submit_payment_entry(docname):
 
         doc = frappe.get_doc("Payment Entry", docname)
         if doc.docstatus == 0:
+            doc.validate()
             doc.submit()
 
             return {
