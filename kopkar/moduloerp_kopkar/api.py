@@ -287,8 +287,26 @@ def add_payment_entry():
 
         request_data = frappe.request.json
 
-        paid_from_account = frappe.get_all("Account", filters={"account_number": request_data["paid_from"]})
-        paid_to_account = frappe.get_all("Account", filters={"account_number": request_data["paid_to"]})
+        payment_type = request_data.get("payment_type")
+        customer_type = request_data.get("customer_type")
+
+        if payment_type == "Receive" and customer_type == "Customer":
+            paid_from_account = frappe.get_all("Account", filters={"account_number": request_data["paid_from"], "account_type": ["in", ["Receivable"]]})
+            paid_to_account = frappe.get_all("Account", filters={"account_number": request_data["paid_to"], "account_type": ["in", ["Bank", "Cash"]]})
+        elif payment_type == "Pay" and customer_type == "Customer":
+            paid_from_account = frappe.get_all("Account", filters={"account_number": request_data["paid_from"], "account_type": ["in", ["Bank", "Cash"]]})
+            paid_to_account = frappe.get_all("Account", filters={"account_number": request_data["paid_to"], "account_type": ["in", ["Receivable"]]})
+        elif payment_type == "Receive" and customer_type == "Supplier":
+            paid_from_account = frappe.get_all("Account", filters={"account_number": request_data["paid_from"], "account_type": ["in", ["Payable"]]})
+            paid_to_account = frappe.get_all("Account", filters={"account_number": request_data["paid_to"], "account_type": ["in", ["Bank", "Cash"]]})
+        elif payment_type == "Pay" and customer_type == "Supplier":
+            paid_from_account = frappe.get_all("Account", filters={"account_number": request_data["paid_from"], "account_type": ["in", ["Bank", "Cash"]]})
+            paid_to_account = frappe.get_all("Account", filters={"account_number": request_data["paid_to"], "account_type": ["in", ["Payable"]]})
+        else:
+            return {
+                'status': 404,
+                'message': 'Account Not Found'
+            }
 
         if paid_from_account and paid_to_account:
             new_invoice = frappe.new_doc('Payment Entry')
@@ -347,17 +365,43 @@ def update_payment_entry():
         docname = data.get('docname')
         updates = data.get('updates')
 
+        doc = frappe.get_doc("Payment Entry", docname)
+        payment_type = doc.get('payment_type')
+        customer_type = doc.get('customer_type')
+
         if updates.get('paid_from'):
-            paid_from_account = frappe.get_all("Account", filters={"account_number": updates["paid_from"]})
+            # paid_from_account = frappe.get_all("Account", filters={"account_number": updates["paid_from"]})
+            if payment_type == "Receive" and customer_type == "Customer":
+                paid_from_account = frappe.get_all("Account", filters={"account_number": updates["paid_from"], "account_type": ["in", ["Receivable"]]})
+            elif payment_type == "Receive" and customer_type == "Supplier":
+                paid_from_account = frappe.get_all("Account", filters={"account_number": updates["paid_from"], "account_type": ["in", ["Payable"]]})
+            elif payment_type == "Pay":
+                paid_from_account = frappe.get_all("Account", filters={"account_number": updates["paid_from"], "account_type": ["in", ["Bank", "Cash"]]})
+            else:
+                return {
+                    'status': 404,
+                    'message': 'Account Not Found'
+                }
+
             if paid_from_account:
                 updates["paid_from"] = paid_from_account[0].name
 
         if updates.get('paid_to'):
-            paid_to_account = frappe.get_all("Account", filters={"account_number": updates["paid_to"]})
+            # paid_to_account = frappe.get_all("Account", filters={"account_number": updates["paid_to"]})
+            if payment_type == "Receive":
+                paid_to_account = frappe.get_all("Account", filters={"account_number": updates["paid_to"], "account_type": ["in", ["Bank", "Cash"]]})
+            elif payment_type == "Pay" and customer_type == "Customer":
+                paid_to_account = frappe.get_all("Account", filters={"account_number": updates["paid_to"], "account_type": ["in", ["Receivable"]]})
+            elif payment_type == "Pay" and customer_type == "Supplier":
+                paid_to_account = frappe.get_all("Account", filters={"account_number": updates["paid_to"], "account_type": ["in", ["Payable"]]})
+            else:
+                return {
+                    'status': 404,
+                    'message': 'Account Not Found'
+                }
+            
             if paid_to_account:
                 updates["paid_to"] = paid_to_account[0].name 
-
-        doc = frappe.get_doc("Payment Entry", docname)
 
         for field, value in updates.items():
             if hasattr(doc, field):
