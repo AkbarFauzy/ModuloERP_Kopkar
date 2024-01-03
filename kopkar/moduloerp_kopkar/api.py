@@ -554,9 +554,17 @@ def add_sales_invoice():
 
             new_customer.append('accounts', default_account)
             new_customer.insert()
-            
-       
         new_invoice = frappe.new_doc('Sales Invoice')
+        
+        debit_to_account = frappe.get_all("Account", filters={"account_number": request_data['debit_to']})
+        if debit_to_account:
+           request_data["debit_to"] = debit_to_account[0].name
+        else:
+             return {
+                'status': 404,
+                'message': 'One or both accounts not found'
+            }
+        
         for field, value in request_data.items():
             if field == 'items':
                 continue
@@ -567,11 +575,9 @@ def add_sales_invoice():
         if items_data: 
             for item_data in items_data:
                 income_account = frappe.get_all("Account", filters={"account_number": item_data["income_account"] })
-                debit_to_account = frappe.get_all("Account", filters={"account_number": item_data["debit_to"]})
-                if income_account and debit_to_account:
+                if income_account:
                     item_data["income_account"] = income_account[0].name
-                    item_data["debit_to_account"] = debit_to_account[0].name
-
+                    
                     new_item = new_invoice.append('items', {})
                     for field, value in item_data.items():
                         setattr(new_item, field, value)
