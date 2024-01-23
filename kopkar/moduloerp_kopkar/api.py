@@ -410,6 +410,8 @@ def update_payment_entry():
                 updates["paid_to"] = paid_to_account[0].name 
 
         for field, value in updates.items():
+            if field == 'references':
+                continue
             if hasattr(doc, field):
                 setattr(doc, field, value)
             else:
@@ -417,6 +419,41 @@ def update_payment_entry():
                     "status": 400,
                     "message": f"Field '{field}' either does not exist or cannot be modified"
                 }
+
+        references_data = updates.get('references', [])
+        if refereces_data:
+            for reference_data in references_data:
+                reference_name = reference_data.get('reference_name')
+                existing_reference = next(
+                    (reference for reference in doc.references if reference.reference_name == reference_name), None
+                )
+                
+                if existing_reference:
+                    payment_references = frappe.get_all(reference_data["reference_doctype"], 
+                                                    filters={"name": reference_data["reference_name"]})
+                        
+                    if not payment_references:
+                        return {
+                            'status': 404,
+                            'message': 'Reference Not Found'
+                        }
+
+                    if reference_data.get("account"):
+                        account = frappe.get_all("Account", filters={"account_number": reference_data["account"]})
+                        if account:
+                            reference_data["account"] = account[0].name
+                        else:
+                            return {
+                                'status': 404,
+                                'message': 'Account not Found'
+                            }
+                    
+                    for field, value in reference_data.items():
+                        setattr(existing_reference, field, value)
+                else:
+                    new_reference = doc.append('references', {})
+                    for key, val in reference_data.items():
+                        setattr(new_reference, key, val)
 
         doc.save()
 
