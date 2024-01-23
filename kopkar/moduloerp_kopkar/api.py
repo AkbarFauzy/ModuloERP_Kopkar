@@ -421,7 +421,7 @@ def update_payment_entry():
                 }
 
         references_data = updates.get('references', [])
-        if refereces_data:
+        if references_data:
             for reference_data in references_data:
                 reference_name = reference_data.get('reference_name')
                 existing_reference = next(
