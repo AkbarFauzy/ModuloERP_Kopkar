@@ -286,7 +286,25 @@ def add_payment_entry():
             frappe.throw(("Not permitted"), frappe.PermissionError)
 
         request_data = frappe.request.json
+        
+        customer = request_data.get('customer')
+        customer_exists = frappe.get_all("Customer", filters={"customer_name": customer})
+        if not customer_exists:
+            new_customer = frappe.new_doc('Customer')
+            new_customer.customer_name = customer
 
+            default_account= {
+                    "parent": new_customer.name,
+                    "company": "Kopkar Toyota",
+                    "account": "130-10 - Piutang Pokok Anggota - Kopkar Toyota",
+                    "parentfield": "accounts",
+                    "parenttype": "Customer",
+                    "doctype": "Party Account"
+                }
+
+            new_customer.append('accounts', default_account)
+            new_customer.insert()
+            
         payment_type = request_data.get("payment_type")
         party_type = request_data.get("party_type")
 
