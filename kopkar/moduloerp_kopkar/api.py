@@ -287,7 +287,7 @@ def add_payment_entry():
 
         request_data = frappe.request.json
         
-        customer = request_data.get('customer')
+        customer = request_data.get('party')
         customer_exists = frappe.get_all("Customer", filters={"customer_name": customer})
         if not customer_exists:
             new_customer = frappe.new_doc('Customer')
