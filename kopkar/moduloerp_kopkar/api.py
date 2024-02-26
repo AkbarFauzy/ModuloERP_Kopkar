@@ -902,6 +902,9 @@ def update_journal_entry(docname):
                 }
 
         accounts_data = updates.get('accounts', [])
+
+        doc.accounts = []
+
         if accounts_data:  # Check if items_data is not empty
             for account_data in accounts_data:
                 account_name = account_data.get('account')
@@ -915,16 +918,16 @@ def update_journal_entry(docname):
                             'status': 404,
                             'message': 'Account Not Found'
                         }           
-                existing_account = next(
-                        (account for account in doc.accounts if account.account == account_name), None
-                    )
-                if existing_account:    
-                    for key, val in account_data.items():
-                        setattr(existing_account, key, val)
-                else:
-                    new_item = doc.append('accounts', {})
-                    for key, val in account_data.items():
-                        setattr(new_item, key, val)
+                # existing_account = next(
+                #         (account for account in doc.accounts if account.account == account_name), None
+                #     )
+                # if existing_account:    
+                #     for key, val in account_data.items():
+                #         setattr(existing_account, key, val)
+                # else:
+                new_item = doc.append('accounts', {})
+                for key, val in account_data.items():
+                    setattr(new_item, key, val)
 
         doc.save()
 
