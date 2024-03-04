@@ -128,6 +128,8 @@ def update_purchase_invoice():
 
         doc = frappe.get_doc("Purchase Invoice", docname)
 
+        doc.payment_schedule = []
+        
         if updates.get("credit_to"):
             credit_to_account = frappe.get_all("Account", filters={"account_number": updates["credit_to"]})
             if credit_to_account:
